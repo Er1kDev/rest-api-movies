@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Probar API Rest</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        main {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        article {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin: 1rem 0;
+        }
+
+        p {
+            margin: 0;
+        }
+    </style>
+    <script type="module">
+        fetch('http://localhost:1234/movies')
+            .then(res => res.json())
+            .then(movies => {
+                const html = movies.map(movie => {
+                    return `
+                <article data-id="${movie.id}">
+                  <h2>${movie.title}</h2>
+                  <img src="${movie.poster}" alt="${movie.title}">
+                  <p>${movie.year}</p>
+    
+                  <button>Eliminar</button>
+                </article>
+              `
+                }).join('')
+
+                document.querySelector('main').innerHTML = html
+
+                document.addEventListener('click', e => {
+                    if (e.target.matches('button')) {
+                        const article = e.target.closest('article')
+                        const id = article.dataset.id
+
+                        fetch(`http://localhost:1234/movies/${id}`, {
+                            method: 'DELETE'
+                        })
+                            .then(res => {
+                                if (res.ok) {
+                                    article.remove()
+                                }
+                            })
+                    }
+
+                })
+            })
+    </script>
+</head>
+
+<body>
+
+    <main>
+
+    </main>
+
+</body>
+
+</html>
